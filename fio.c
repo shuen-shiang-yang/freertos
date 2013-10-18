@@ -10,7 +10,27 @@
 static struct fddef_t fio_fds[MAX_FDS];
 
 static ssize_t stdin_read(void * opaque, void * buf, size_t count) {
-    return 0;
+
+    int i = 0;
+    char *ptrbuf = buf;
+    int cmd_end_flag=0;
+
+    while( (i < count) && (cmd_end_flag != 1) ){
+        ptrbuf[i]=recv_byte();
+        
+        switch(ptrbuf[i]){
+            case '\r':
+            case '\n':
+                ptrbuf[i] = '\0';
+                cmd_end_flag = 1;
+                break;
+            default :
+                cmd_end_flag = 0;
+        }
+        send_byte(ptrbuf[i]);
+        ++i;
+    }
+    return i;
 }
 
 static ssize_t stdout_write(void * opaque, const void * buf, size_t count) {
@@ -178,6 +198,21 @@ static int devfs_open(void * opaque, const char * path, int flags, int mode) {
     }
     return -1;
 }
+
+
+
+/*int sprintf(char *str, const char *format, ...)
+{
+    const char va_list ;	
+    int rval = 0;
+    va_list param = {0};
+
+    va_start(param, format);
+    rval = base_printf(sprintf_cb, (char *)str, format, param);
+    va_end(param);
+
+    return rval;
+}*/
 
 void register_devfs() {
     DBGOUT("Registering devfs.\r\n");
