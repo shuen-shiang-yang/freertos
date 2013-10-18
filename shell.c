@@ -1,6 +1,6 @@
 #include "fio.h"
 #include "shell.h"
-#include "rtenv_util.h"
+#include "strfun.h"
 #include "FreeRTOS.h"
 #include "task.h"
 
@@ -55,7 +55,7 @@ void check_keyword(char *msg, char *msg_size)
 }
 
 void help(){
-	const char help_desp[] = "\n\rThis system has commands as follow : ";
+	const char help_desp[] = "\n\rOffer these funcs : ";
 	int i;
 
 	fio_write(1, &help_desp, sizeof(help_desp));
